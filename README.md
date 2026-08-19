@@ -1,4 +1,4 @@
-Track 1 — Day 18: Multiple Prototypes — Human–AI Design
+Track 1 — Day 19: Multiple Prototypes — Human–AI Design
 
 1. Thông tin nhóm
 
@@ -10,7 +10,8 @@ Thành viên 1: Lê Ngọc Khánh — 2A202601487
 
 Thành viên 2: Trần Tuấn Anh — 2A202601086
 
-Lưu ý: Phần Chặng 6–7 bên dưới là SIMULATED / DEMO DATA để luyện trình bày và hoàn thiện cấu trúc bài. Không dùng như evidence test thật nếu chưa có tester thực tế tương ứng.
+Lưu ý: File đã được chuyển sang Day 19 theo yêu cầu.
+Phần Chặng 6–7 bên dưới đang sử dụng dữ liệu demo/simulated để hoàn thiện cấu trúc bài; không nên trình bày như evidence test thật nếu chưa có tester thực tế tương ứng.
 
 Chặng 1 — Tổng hợp Evidence
 
@@ -156,23 +157,49 @@ Không tự diagnosis learner.
 
 Chỉ giải thích concept do learner chọn.
 
+Evidence chính
+
+Self-diagnosis của learner.
+
+Concept learner chủ động chọn.
+
 Trade-off
 
-Ưu: User control cao, nhanh, ít AI inference.
+Ưu điểm
 
-Nhược: Nếu learner chưa biết mình đang thiếu gì thì có thể chọn sai concept.
+User control cao.
+
+Nhanh.
+
+Ít AI inference.
+
+Nhược điểm
+
+Nếu learner chưa biết mình đang thiếu gì thì có thể chọn sai concept.
 
 2.3 Option B — AI Suggests, User Confirms
 
 Mechanism
 
-AI gợi ý 2–3 candidate knowledge gaps, sau đó learner xác nhận hoặc reject.
+AI sử dụng context đã có để gợi ý 2–3 candidate knowledge gaps, sau đó learner xác nhận hoặc reject.
+
+Context AI có thể dùng
+
+Bài hiện tại.
+
+Section hiện tại.
+
+Concept liên quan.
+
+Câu trả lời gần đây nếu VLearn có lưu.
+
+Lịch sử học tập nếu VLearn cung cấp.
 
 User làm gì?
 
 Bấm “Tôi vẫn chưa hiểu”.
 
-Xem suggestion và evidence.
+Xem suggestion và phần “Vì sao AI gợi ý?”.
 
 Chọn một gap hoặc chọn “Không phải”.
 
@@ -182,63 +209,145 @@ Quay lại lesson.
 
 AI làm gì?
 
-Phân tích lesson context.
+Phân tích context đã có.
 
 Gợi ý candidate gaps.
 
-Hiển thị lý do.
+Hiển thị evidence.
 
 Không tự quyết định thay learner.
 
 Trade-off
 
-Ưu: Giảm cognitive load, giúp learner có điểm bắt đầu nhanh hơn, user vẫn giữ quyền xác nhận.
+Ưu điểm
 
-Nhược: AI có thể suggest sai, suggestion có thể gây anchoring.
+Giảm cognitive load.
 
-2.4 Option C — Diagnostic Mini-Quiz
+Giúp learner có điểm bắt đầu nhanh hơn.
+
+User vẫn giữ quyền xác nhận.
+
+Nhược điểm
+
+AI có thể suggest sai.
+
+Suggestion có thể gây anchoring nếu learner tin AI quá nhanh.
+
+2.4 Option C — Adaptive Diagnostic
 
 Mechanism
 
-AI hỏi 2–3 câu ngắn rồi đưa ra diagnosis tạm thời.
+AI sử dụng context ban đầu để hình thành hypothesis về knowledge gap, sau đó hỏi một số câu diagnostic ngắn để xác minh trước khi đưa diagnosis tạm thời.
+
+AI có thể dựa trên
+
+Trước diagnostic
+
+Bài hiện tại.
+
+Câu trả lời gần đây.
+
+Lịch sử học tập.
+
+Hoạt động học gần đây nếu VLearn có lưu, ví dụ: xem lại nội dung, đổi đáp án, đánh dấu “Chưa hiểu”, hỏi AI về cùng một concept.
+
+Trong diagnostic
+
+Correctness: đáp án đúng/sai.
+
+Reasoning: vì sao learner chọn đáp án đó.
+
+Confidence: learner chắc chắn hay đang đoán.
+
+Self-report: learner tự đánh dấu phần mình chưa chắc.
+
+Consistency: các câu trả lời có nhất quán không.
 
 User làm gì?
 
 Bấm “Tôi vẫn chưa hiểu”.
 
-Trả lời diagnostic questions.
+Trả lời 1–3 diagnostic questions.
+
+Giải thích ngắn: “Vì sao bạn chọn đáp án này?”
+
+Chọn mức độ tự tin.
+
+Tự đánh dấu phần mình chưa chắc.
 
 Review diagnosis.
 
-Chấp nhận hoặc thay đổi.
+Chấp nhận, reject hoặc chọn lại.
 
-Nhận refresher.
-
-Quay lại lesson.
+Nhận refresher và quay lại lesson.
 
 AI làm gì?
 
-Tạo diagnostic questions.
+Chọn câu hỏi dựa trên knowledge gap đang nghi ngờ.
 
-Dùng câu trả lời làm evidence.
+Không coi một đáp án đúng là bằng chứng đủ.
 
-Đề xuất likely knowledge gap.
+Kết hợp correctness + reasoning + confidence + self-report.
 
-Tạo refresher.
+Đưa diagnosis tạm thời cùng evidence và uncertainty.
+
+Cho phép learner reject hoặc sửa diagnosis.
+
+Xử lý trường hợp “đoán đúng nhưng không hiểu”
+
+Nếu learner:
+
+chọn đúng đáp án;
+
+nhưng nói “Em đoán”;
+
+hoặc không giải thích được vì sao đáp án đúng;
+
+thì AI không kết luận learner đã hiểu.
+
+Ví dụ:
+
+Correctness: đúng
+Reasoning: chưa thể hiện hiểu biết
+Confidence: thấp
+→ Diagnosis: hiểu chưa ổn định
+→ Reliability: thấp–trung bình
 
 Trade-off
 
-Ưu: Có thêm evidence trước khi diagnosis, phù hợp khi learner chưa biết mình đang thiếu gì.
+Ưu điểm
 
-Nhược: Nhiều friction hơn, tốn thời gian hơn.
+Có nhiều evidence hơn trước khi diagnosis.
+
+Phù hợp khi learner thật sự không biết mình thiếu gì.
+
+Giảm nguy cơ coi “trả lời đúng” là “hiểu thật”.
+
+Nhược điểm
+
+Tốn thời gian hơn B.
+
+Nếu hỏi quá nhiều sẽ tạo friction.
+
+Chất lượng diagnosis vẫn phụ thuộc chất lượng câu hỏi và signal đầu vào.
 
 2.5 Distance Check
 
-A khác B: A không inference knowledge state; B có AI suggestion.
+So sánh
 
-B khác C: B dùng signal sẵn có; C thu thêm evidence bằng diagnostic questions.
+Khác biệt chính
 
-A khác C: A user-led; C AI-led diagnostic.
+A vs B
+
+A để learner tự xác định gap; B để AI gợi ý từ context rồi learner xác nhận
+
+B vs C
+
+B dùng evidence đã có để suggest; C thu thêm evidence mới bằng diagnostic questions
+
+A vs C
+
+A gần như không inference; C chủ động diagnosis nhưng vẫn cần user review
 
 Chặng 3 — Human–AI Design Pass
 
@@ -258,7 +367,7 @@ Tự chọn gap
 
 Review suggestion
 
-Trả lời diagnostic
+Trả lời diagnostic + reasoning + confidence
 
 AI làm gì?
 
@@ -286,11 +395,11 @@ Diagnosis chỉ là tạm thời
 
 Evidence
 
-Quan hệ prerequisite
+Concept user chọn
 
-Lý do AI gợi ý
+Context + lý do AI gợi ý
 
-Answers dẫn tới diagnosis
+Correctness + reasoning + confidence + self-report
 
 Uncertainty
 
@@ -298,7 +407,7 @@ Gần như không cần inference
 
 “Có thể / có khả năng”
 
-“Diagnosis tạm thời”
+Reliability + diagnosis tạm thời
 
 Recovery
 
@@ -306,21 +415,49 @@ Chọn lại / Back
 
 Reject / tự chọn
 
-Đổi diagnosis / bỏ quiz
+Reject / làm lại / tự chọn / bỏ diagnosis
 
 3.2 Evidence, Uncertainty, Recovery
 
-Evidence: căn cứ AI dùng để đưa ra suggestion/diagnosis.
+Evidence
 
-Uncertainty: AI thể hiện khi chưa chắc chắn, ví dụ “Có thể bạn đang vướng ở percentile”.
+Căn cứ AI dùng để đưa ra suggestion hoặc diagnosis.
 
-Recovery: người dùng có thể reject, chọn lại, bỏ diagnosis hoặc quay lại bài.
+Uncertainty
+
+AI không nên nói:
+
+“Bạn chắc chắn không hiểu percentile.”
+
+Nên nói:
+
+“Có thể bạn đang vướng ở percentile.”
+
+hoặc:
+
+“Diagnosis tạm thời: Percentile — cần bạn xác nhận.”
+
+Recovery
+
+Người dùng luôn có thể:
+
+Không đúng — chọn phần khác
+
+Tôi muốn tự chọn
+
+Làm lại diagnostic
+
+Bỏ diagnosis
+
+Quay lại bài
 
 Chặng 4 — Build ba Micro-prototype
 
 4.1 File Prototype
 
 Prototype_ABC.html
+
+Khi nộp, nên đổi tên file prototype tối ưu cuối cùng thành Prototype_ABC.html.
 
 4.2 Common Context
 
@@ -352,13 +489,35 @@ Critical interaction: AI suggest → User confirm.
 
 4.5 Prototype C
 
-AI hỏi 3 diagnostic questions.
+AI hỏi diagnostic questions.
+
+Mỗi câu có phần “Vì sao bạn chọn đáp án này?”.
+
+Learner chọn mức độ tự tin.
+
+Learner tự đánh dấu phần chưa chắc.
 
 AI đưa diagnosis tạm thời.
 
-Hiển thị evidence, uncertainty và recovery.
+AI hiển thị:
 
-Critical interaction: AI hỏi → AI diagnosis → User review.
+correctness;
+
+reasoning;
+
+confidence;
+
+self-report;
+
+reliability;
+
+uncertainty;
+
+recovery.
+
+Critical interaction:
+
+AI hỏi → thu evidence → diagnosis tạm thời → user review.
 
 Chặng 5 — Chuẩn bị Test
 
@@ -370,7 +529,21 @@ Chặng 5 — Chuẩn bị Test
 
 “Bạn đang học phần P50, P95 và P99 latency nhưng chưa hiểu vì sao P95 cần thiết khi đã có average latency. Hãy sử dụng từng phương án để tìm ra phần bạn cần làm rõ và quay lại bài học khi bạn cảm thấy đã đủ hiểu để tiếp tục.”
 
-5.3 Test Order
+5.3 Observation Focus
+
+Trong mỗi lượt test, ghi lại:
+
+First action
+
+Hesitation / misunderstanding
+
+Evidence read / ignored
+
+Control / recovery
+
+Option chosen + trade-off
+
+5.4 Test Order
 
 Tester
 
@@ -388,9 +561,11 @@ Tester 3
 
 C → A → B
 
+Tổng: 3 tester × 3 options = 9 lượt trải nghiệm prototype.
+
 Chặng 6 — Test A/B/C
 
-SIMULATED / DEMO DATA
+Dữ liệu bên dưới là demo/simulated theo file hiện tại.
 
 Tester 1 — P01
 
@@ -402,11 +577,11 @@ TC01 — Option A
 
 First action: Đọc toàn bộ danh sách concept trước khi chọn.
 
-Hesitation / misunderstanding: Do dự giữa “Percentile” và “P95 được diễn giải thế nào?” vì hai lựa chọn khá gần nhau.
+Hesitation / misunderstanding: Do dự giữa “Percentile” và “P95 được diễn giải thế nào?”.
 
 Evidence read / ignored: Không có AI suggestion nên tester phải tự dựa vào hiểu biết của mình.
 
-Control / recovery: Hiểu rằng có thể chọn lại concept nếu lựa chọn đầu tiên chưa đúng.
+Control / recovery: Hiểu rằng có thể chọn lại concept.
 
 Quote:
 
@@ -416,11 +591,11 @@ TC02 — Option B
 
 First action: Đọc suggestion đầu tiên và phần “Vì sao AI gợi ý?”.
 
-Hesitation / misunderstanding: Hỏi sự khác nhau giữa Option B và Option C.
+Hesitation / misunderstanding: Hỏi sự khác nhau giữa B và C.
 
 Evidence read / ignored: Có đọc evidence trước khi xác nhận.
 
-Control / recovery: Nhận ra có thể reject suggestion và tự chọn concept khác.
+Control / recovery: Nhận ra có thể reject suggestion.
 
 Quote:
 
@@ -428,13 +603,13 @@ Quote:
 
 TC03 — Option C
 
-First action: Làm đủ 3 diagnostic questions.
+First action: Làm diagnostic questions.
 
-Hesitation / misunderstanding: Đặt câu hỏi về độ tin cậy nếu người dùng trả lời bừa nhưng tình cờ đúng.
+Hesitation / misunderstanding: Đặt câu hỏi về trường hợp người dùng trả lời bừa nhưng tình cờ đúng.
 
-Evidence read / ignored: Có đọc phần evidence giải thích diagnosis.
+Evidence read / ignored: Có đọc evidence giải thích diagnosis.
 
-Control / recovery: Hiểu rằng có thể reject diagnosis hoặc tự chọn concept khác.
+Control / recovery: Hiểu rằng có thể reject diagnosis hoặc tự chọn lại.
 
 Quote:
 
@@ -444,25 +619,25 @@ Compare
 
 Option chọn: C
 
-Vì sao: Tester thích việc AI hỏi thêm câu diagnostic thay vì chỉ suy đoán từ context. Tester cho rằng nếu câu hỏi được thiết kế tốt và có nhiều signal hơn một câu đúng/sai đơn lẻ thì diagnosis có khả năng sát knowledge gap hơn.
+Vì sao: Muốn AI thu thêm evidence trước khi diagnosis.
 
-Trade-off chính: Option C tốn thời gian hơn nhưng tester chấp nhận thêm vài bước để đổi lấy cảm giác diagnosis có căn cứ hơn.
+Trade-off chính: C chậm hơn nhưng tạo cảm giác diagnosis có căn cứ hơn.
 
 Tester 2 — P02
 
-Relevant context: Thường học lập trình qua slide và video; khi bị mắc thường biết tương đối chủ đề mình chưa hiểu nhưng không chắc nên bắt đầu ôn từ đâu.
+Relevant context: Thường học lập trình qua slide và video; khi bị mắc thường biết tương đối vùng kiến thức nhưng không chắc nên bắt đầu ôn từ đâu.
 
 Order: B → C → A
 
 TC04 — Option B
 
-First action: Đọc cả 3 suggestion rồi quay lại đọc lý do của suggestion “Percentile”.
+First action: Đọc cả 3 suggestion rồi xem lý do của suggestion “Percentile”.
 
-Hesitation / misunderstanding: Ban đầu chưa rõ AI đang dựa vào dữ liệu nào để gợi ý.
+Hesitation / misunderstanding: Ban đầu chưa rõ AI dựa vào dữ liệu nào để gợi ý.
 
-Evidence read / ignored: Đọc phần “Vì sao AI gợi ý?” trước khi xác nhận.
+Evidence read / ignored: Đọc “Vì sao AI gợi ý?”.
 
-Control / recovery: Thử nút reject và đánh giá cao khả năng tự chọn phần khác.
+Control / recovery: Thử reject và đánh giá cao khả năng tự chọn.
 
 Quote:
 
@@ -470,17 +645,17 @@ Quote:
 
 TC05 — Option C
 
-First action: Làm 2 câu đầu nhanh, dừng lâu hơn ở câu thứ ba.
+First action: Làm diagnostic.
 
-Hesitation / misunderstanding: Cảm thấy diagnostic flow hơi dài so với mức độ khó của câu hỏi ban đầu.
+Hesitation / misunderstanding: Cảm thấy flow hơi dài nếu đã biết gần đúng vùng đang vướng.
 
-Evidence read / ignored: Có đọc diagnosis nhưng lướt nhanh phần evidence.
+Evidence read / ignored: Có đọc diagnosis nhưng lướt nhanh evidence.
 
-Control / recovery: Biết có thể đổi diagnosis nhưng không muốn phải quay lại làm lại quiz.
+Control / recovery: Biết có thể đổi diagnosis.
 
 Quote:
 
-“Nếu mình đã biết gần gần là vướng ở đâu thì hỏi ba câu hơi mất công.”
+“Nếu mình đã biết gần gần là vướng ở đâu thì hỏi nhiều bước hơi mất công.”
 
 TC06 — Option A
 
@@ -488,9 +663,7 @@ First action: Chọn ngay “Average khác P95 thế nào?”.
 
 Hesitation / misunderstanding: Không gặp breakdown lớn.
 
-Evidence read / ignored: Không có AI suggestion.
-
-Control / recovery: Control rõ, nhưng tester nói nếu không biết gap thì A sẽ khó.
+Control / recovery: Control rõ.
 
 Quote:
 
@@ -500,9 +673,9 @@ Compare
 
 Option chọn: B
 
-Vì sao: Tester muốn AI thu hẹp phạm vi trước nhưng vẫn muốn tự xác nhận. B giúp giảm số bước hơn C và giảm cognitive load hơn A.
+Vì sao: Muốn AI thu hẹp phạm vi trước nhưng vẫn muốn tự xác nhận.
 
-Trade-off chính: B cân bằng tốt giữa tốc độ và quyền kiểm soát, nhưng cần hiển thị evidence rõ để tránh user tin suggestion một cách máy móc.
+Trade-off chính: B cân bằng tốc độ và quyền kiểm soát.
 
 Tester 3 — P03
 
@@ -512,11 +685,11 @@ Order: C → A → B
 
 TC07 — Option C
 
-First action: Làm diagnostic questions ngay.
+First action: Làm diagnostic ngay.
 
 Hesitation / misunderstanding: Ban đầu hiểu “diagnosis tạm thời” như một kết luận khá chắc chắn.
 
-Evidence read / ignored: Sau khi đọc evidence thì hiểu rõ hơn vì sao AI đưa ra diagnosis.
+Evidence read / ignored: Sau khi đọc evidence thì hiểu rõ hơn.
 
 Control / recovery: Đánh giá cao nút “Không đúng — chọn phần khác”.
 
@@ -530,9 +703,7 @@ First action: Đọc toàn bộ danh sách concept.
 
 Hesitation / misunderstanding: Phân vân giữa “Percentile” và “P95 được diễn giải thế nào?”.
 
-Evidence read / ignored: Không có evidence hỗ trợ lựa chọn.
-
-Control / recovery: Có thể chọn lại nhưng tester vẫn cảm thấy phải tự diagnosis quá nhiều.
+Control / recovery: Có thể chọn lại nhưng vẫn phải tự diagnosis khá nhiều.
 
 Quote:
 
@@ -542,11 +713,11 @@ TC09 — Option B
 
 First action: Đọc suggestion đầu tiên và xác nhận khá nhanh.
 
-Hesitation / misunderstanding: Lo rằng suggestion đầu tiên có thể khiến mình bị dẫn dắt.
+Hesitation / misunderstanding: Lo suggestion đầu tiên khiến learner bị dẫn dắt.
 
-Evidence read / ignored: Có đọc lý do nhưng vẫn cho rằng AI đang định hướng user khá mạnh.
+Evidence read / ignored: Có đọc lý do.
 
-Control / recovery: Biết reject nhưng cảm thấy user có thể không dùng nút đó nếu quá tin AI.
+Control / recovery: Biết reject.
 
 Quote:
 
@@ -556,13 +727,11 @@ Compare
 
 Option chọn: C
 
-Vì sao: Tester thích việc AI thu thêm evidence trước khi đưa ra diagnosis, đặc biệt trong trường hợp bản thân chưa biết đang thiếu kiến thức nào.
+Vì sao: Muốn AI thu thêm evidence trước khi diagnosis.
 
-Trade-off chính: C chậm hơn nhưng giảm cảm giác AI đoán mò từ context. Tester yêu cầu diagnosis phải thể hiện uncertainty rõ và cho phép reject dễ dàng.
+Trade-off chính: C chậm hơn nhưng giảm cảm giác AI đoán mò từ context.
 
 Chặng 7 — Group Feedback Synthesis
-
-SIMULATED / DEMO DATA
 
 7.1 Tổng hợp Feedback
 
@@ -576,47 +745,37 @@ Tester 3
 
 Pattern / Khác biệt
 
-First action
-
-A: đọc concept; B: đọc evidence; C: làm quiz
-
-B: đọc suggestion; C: làm quiz; A: chọn gap
-
-C: làm quiz; A: đọc concept; B: đọc suggestion
-
-Hành vi thay đổi theo mechanism của từng option
-
 Breakdown chính
 
 Lo C sai nếu user đoán đúng
 
-C hơi dài; A cần tự biết gap
+C hơi dài
 
-A khó khi chưa biết gap; B có nguy cơ anchoring
+B có nguy cơ anchoring
 
-A khó cho learner chưa rõ gap; B nhanh nhưng có anchoring; C cần kiểm soát reliability
+C cần kiểm soát reliability; B cần evidence rõ
 
-Evidence read / ignored
+Evidence
 
-Đọc evidence ở B/C
+Đọc B/C
 
-Đọc kỹ evidence ở B, lướt ở C
+Đọc kỹ B, lướt C
 
-Evidence giúp hiểu diagnosis C
+Evidence giúp hiểu C
 
-Evidence quan trọng nhất khi AI chủ động inference
+Evidence quan trọng khi AI inference
 
 Recovery
 
 Biết reject
 
-Muốn reject nhanh, không làm lại quiz
+Muốn reject nhanh
 
 Đánh giá cao reject diagnosis
 
-Recovery phải dễ thấy và ít bước
+Recovery phải dễ thấy
 
-Option được chọn
+Option chọn
 
 C
 
@@ -624,7 +783,7 @@ B
 
 C
 
-2/3 nghiêng về C, 1/3 chọn B
+2/3 nghiêng về C
 
 Trade-off
 
@@ -634,75 +793,69 @@ B cân bằng tốc độ/control
 
 C đáng tin hơn nếu evidence tốt
 
-Không có option thắng tuyệt đối; preference phụ thuộc mức user biết gap
+Không có option thắng tuyệt đối
 
 7.2 Observed
 
-Tester 1 và Tester 3 chọn Option C vì muốn AI thu thêm evidence trước khi diagnosis.
+Tester 1 và Tester 3 nghiêng về C vì muốn AI thu thêm evidence.
 
-Tester 2 chọn Option B vì đã tương đối biết vùng kiến thức đang vướng và không muốn làm thêm diagnostic quiz.
+Tester 2 nghiêng về B vì muốn flow nhanh hơn.
 
-Option A được đánh giá là nhanh nhưng phụ thuộc mạnh vào việc learner có tự xác định được knowledge gap hay không.
+A nhanh nhưng phụ thuộc learner đã biết gap.
 
-Option B giảm friction nhưng có nguy cơ anchoring nếu user quá tin suggestion đầu tiên.
+B có anchoring risk.
 
-Option C có khả năng tạo cảm giác diagnosis có căn cứ hơn, nhưng đặt ra vấn đề reliability nếu answer không phản ánh actual understanding.
+C có reliability risk nếu chỉ nhìn correctness.
 
 7.3 Interpreted
 
-Kết quả cho thấy không nên thiết kế một flow duy nhất cho mọi learner.
+Không nên dùng một flow duy nhất cho mọi learner:
 
-Có thể chia thành hai tình huống:
+Learner đã tương đối biết vùng đang vướng → B phù hợp hơn.
 
-Learner tương đối biết mình đang vướng ở đâu:
-Option B phù hợp hơn vì AI chỉ cần thu hẹp candidate gaps và để user xác nhận.
+Learner không biết mình thiếu gì → C phù hợp hơn.
 
-Learner không biết mình đang thiếu kiến thức nào:
-Option C phù hợp hơn vì AI cần thu thêm evidence trước khi đưa ra diagnosis.
-
-Option A phù hợp nhất khi learner đã biết rõ concept cần làm rõ, nhưng giá trị diagnosis thấp nhất.
+Learner biết rõ concept cần làm rõ → A nhanh nhất.
 
 7.4 Evidence chống lại kỳ vọng ban đầu
 
-Kỳ vọng ban đầu:
+Kỳ vọng:
 
 Có thêm diagnostic questions thì diagnosis sẽ đáng tin hơn.
 
-Feedback từ Tester 1 cho thấy assumption này chưa chắc đúng:
+Điểm phản biện:
 
-Nếu learner đoán, copy hoặc tình cờ chọn đúng, correct answer chưa chắc phản ánh actual understanding.
+Correct answer chưa chắc phản ánh actual understanding nếu learner đoán, copy hoặc không giải thích được lý do.
 
-Feedback từ Tester 2 cũng cho thấy:
-
-Nhiều evidence hơn có thể không đáng giá nếu chi phí tương tác quá cao so với nhu cầu của learner.
+Vì vậy Option C được cải thiện để dùng thêm reasoning + confidence + self-report.
 
 7.5 One Next Change
 
-Next Change: Thiết kế flow thích ứng hai tầng: mặc định dùng Option B — AI Suggests, User Confirms, nhưng bổ sung nút “Tôi vẫn không biết mình vướng ở đâu” để chuyển sang Option C — Diagnostic Mini-Quiz khi learner cần diagnosis sâu hơn.
+Next Change: Dùng Option B làm flow mặc định, nhưng bổ sung nút “Tôi vẫn không biết mình vướng ở đâu” để chuyển sang Option C — Adaptive Diagnostic khi learner cần diagnosis sâu hơn.
 
 7.6 Evidence dẫn tới Next Change
 
-Tester 2 chọn B vì tốc độ và user control.
+B nhanh và ít friction hơn.
 
-Tester 1 và Tester 3 chọn C vì muốn diagnosis có thêm evidence.
+C hữu ích khi learner thật sự không xác định được gap.
 
-A hữu ích khi learner đã biết rõ gap nhưng không xử lý tốt trường hợp problem hypothesis chính.
+A phù hợp khi user đã biết rõ phần cần hỏi.
 
-Vì vậy, thay vì chọn B hoặc C tuyệt đối, nhóm kết hợp B làm flow mặc định và C làm escalation flow.
+Kết hợp B → C cho phép hệ thống thích ứng với mức độ uncertainty của learner.
 
 7.7 Still Unproven
 
-Nhóm vẫn chưa chứng minh rằng:
+Nhóm vẫn chưa chứng minh:
 
 Diagnostic questions thực sự xác định đúng actual knowledge gap.
 
-Flow B → C giúp learner tiết kiệm thời gian hơn so với tự tìm Google/ChatGPT.
+Flow B → C tiết kiệm thời gian hơn workaround hiện tại.
 
-Learner có sử dụng nút chuyển sang diagnostic khi thực sự cần.
+Learner sẽ sử dụng escalation sang C đúng lúc.
 
 AI explanation sau diagnosis giúp tăng learning outcome.
 
-Kết quả từ số lượng tester nhỏ có thể đại diện cho toàn bộ learner population.
+Kết quả từ số lượng tester nhỏ đại diện cho toàn bộ learner population.
 
 AI Support Log
 
@@ -720,7 +873,7 @@ Gợi ý prototype flow.
 
 AI sai / hơi hợt ở đâu?
 
-Một số gợi ý ban đầu dễ làm cả ba option giống nhau và chỉ khác giao diện.
+Một số gợi ý ban đầu dễ làm cả ba option giống nhau.
 
 AI có xu hướng coi diagnosis nhiều hơn là tốt hơn.
 
@@ -730,9 +883,9 @@ Giữ A là user-led.
 
 Giữ B là AI suggestion + user confirmation.
 
-Giữ C là diagnostic.
+Tối ưu C bằng reasoning + confidence + self-report.
 
-Tách B thành flow mặc định và C thành escalation sau khi xem feedback.
+Đề xuất B → C thay vì chọn một flow duy nhất.
 
 Trần Tuấn Anh
 
@@ -746,23 +899,23 @@ Gợi ý cách thể hiện evidence, uncertainty và recovery.
 
 AI sai / hơi hợt ở đâu?
 
-Ban đầu các option còn quá gần nhau về mục tiêu cuối.
+Ban đầu B và C chưa khác nhau đủ rõ về nguồn evidence.
 
-AI chưa tính đủ trường hợp learner trả lời đúng do đoán.
+Chưa tính đủ trường hợp learner trả lời đúng do đoán.
 
-AI chưa nhấn mạnh đủ anchoring risk của Option B.
+Chưa nhấn mạnh đủ anchoring risk của B.
 
 Tôi đã tự sửa / quyết định lại điều gì?
 
-Làm rõ sự khác nhau giữa B và C ở nguồn evidence.
+Làm rõ B dùng context đã có để suggest.
 
-Giữ user confirmation ở B.
+C thu thêm evidence mới để diagnosis.
 
-Giữ uncertainty và recovery ở C.
+Giữ user confirmation và recovery ở cả B/C.
 
-Đề xuất flow B → C thay vì chọn một option duy nhất.
+Thêm reasoning check cho C.
 
-Deliverables cuối Day 18
+Deliverables cuối Day 19
 
 Hypothesis Problem
 
@@ -796,9 +949,38 @@ AI Support Log
 
 Cấu trúc thư mục
 
-Day18/
+Day19/
 ├── README.md
 └── Prototype_ABC.html
+
+Tóm tắt ba Options
+
+COMMON PROBLEM
+Learner chưa hiểu P95 và cần tiếp tục bài
+        │
+        ├── OPTION A — USER-LED
+        │   User tự chọn knowledge gap
+        │   ↓
+        │   AI giải thích
+        │
+        ├── OPTION B — CO-CREATE
+        │   AI dùng context đã có
+        │   ↓
+        │   AI suggest knowledge gap
+        │   ↓
+        │   User confirm
+        │
+        └── OPTION C — ADAPTIVE DIAGNOSTIC
+            AI dùng context để chọn câu hỏi
+            ↓
+            Diagnostic answers
+            + Reasoning
+            + Confidence
+            + Self-report
+            ↓
+            AI diagnosis tạm thời
+            ↓
+            User review
 
 Learning Goal
 
