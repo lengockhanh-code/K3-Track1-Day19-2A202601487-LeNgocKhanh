@@ -1,0 +1,503 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Day 18 — AI Tutor Micro-Prototypes A/B/C</title>
+<style>
+  :root{
+    --bg:#f7f9fc; --card:#fff; --text:#183153; --muted:#667085;
+    --line:#dbe3ee; --primary:#0f5ca8; --primary2:#eaf3ff;
+    --ok:#0f7b55; --warn:#9a6700; --danger:#b42318;
+    --radius:16px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--text)}
+  .app{max-width:1050px;margin:0 auto;padding:24px}
+  .topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:18px}
+  .brand h1{font-size:24px;margin:0}.brand p{margin:6px 0 0;color:var(--muted);font-size:14px}
+  .badge{padding:8px 12px;border-radius:999px;background:#eef4ff;color:#344054;font-size:13px;font-weight:700}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:22px;box-shadow:0 4px 14px rgba(16,24,40,.04)}
+  .lesson-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
+  .lesson-head h2{margin:0 0 8px;font-size:22px}
+  .lesson-head .meta{color:var(--muted);font-size:14px}
+  .content-box{margin-top:18px;background:#f8fafc;border:1px solid var(--line);border-radius:12px;padding:18px}
+  .content-box h3{margin-top:0}
+  .metric-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:14px 0}
+  .metric{border:1px solid var(--line);border-radius:12px;padding:14px;background:white}
+  .metric b{display:block;margin-bottom:6px}
+  .question{margin-top:18px;padding:16px;border-left:4px solid var(--primary);background:#f7fbff;border-radius:8px}
+  .actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+  button{font:inherit;border:0;border-radius:10px;padding:11px 15px;cursor:pointer;font-weight:700}
+  .primary{background:var(--primary);color:white}
+  .secondary{background:#eef2f6;color:var(--text)}
+  .ghost{background:white;border:1px solid var(--line);color:var(--text)}
+  .danger{background:#fff1f0;color:var(--danger);border:1px solid #fecdca}
+  .hidden{display:none!important}
+  .screen-title{font-size:20px;margin:0 0 8px}
+  .sub{color:var(--muted);margin:0 0 16px}
+  .option-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+  .option-card{border:1px solid var(--line);border-radius:14px;padding:16px;background:white}
+  .option-card h3{margin:0 0 8px;font-size:17px}
+  .option-card p{color:var(--muted);font-size:14px;line-height:1.5}
+  .option-card button{width:100%;margin-top:8px}
+  .reason{margin-top:10px;padding:10px;background:#f8fafc;border-radius:8px;font-size:13px;color:#475467}
+  .confidence{display:inline-block;font-size:12px;padding:5px 8px;border-radius:999px;background:#fff7e6;color:#8a5d00;font-weight:700}
+  .quiz .q{border:1px solid var(--line);border-radius:12px;padding:14px;margin:12px 0}
+  .quiz label{display:block;padding:8px 0;color:#344054;cursor:pointer}
+  .reason-input{width:100%;min-height:82px;margin-top:10px;padding:11px 12px;border:1px solid var(--line);border-radius:10px;font:inherit;resize:vertical;background:#fff;color:var(--text)}
+  .reason-input:focus{outline:2px solid #cfe4ff;border-color:var(--primary)}
+  .result{border:1px solid #abefc6;background:#ecfdf3;border-radius:12px;padding:16px}
+  .result h3{margin-top:0;color:#067647}
+  .evidence{margin-top:12px;border:1px solid var(--line);border-radius:12px;padding:14px;background:white}
+  .evidence ul{margin:8px 0 0 18px;padding:0}
+  .tabs{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0}
+  .tabs button{background:white;border:1px solid var(--line);color:var(--text)}
+  .tabs button.active{background:var(--primary);color:white;border-color:var(--primary)}
+  .footer-note{margin-top:18px;font-size:13px;color:var(--muted)}
+  .proto-label{font-weight:800;margin-bottom:10px}
+  .small{font-size:13px;color:var(--muted)}
+  @media (max-width:760px){
+    .option-grid,.metric-grid{grid-template-columns:1fr}
+    .app{padding:14px}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="brand">
+      <h1>AI Tutor — Diagnostic Refresher</h1>
+      <p>Day 18 · Three micro-prototypes A/B/C · cùng context, cùng task</p>
+    </div>
+    <div class="badge">Prototype test</div>
+  </div>
+
+  <div class="tabs">
+    <button id="tab-common" class="active" onclick="showCommon()">Common Context</button>
+    <button id="tab-a" onclick="startOption('A')">Option A</button>
+    <button id="tab-b" onclick="startOption('B')">Option B</button>
+    <button id="tab-c" onclick="startOption('C')">Option C</button>
+  </div>
+
+  <div id="common" class="card">
+    <div class="lesson-head">
+      <div>
+        <h2>Day 13 — Monitoring, Logging & Observability</h2>
+        <div class="meta">Phần: Latency Percentiles</div>
+      </div>
+      <span class="badge">Common Context</span>
+    </div>
+
+    <div class="content-box">
+      <h3>P50, P95 và P99 latency</h3>
+      <p><b>Average latency</b> là tổng latency chia cho số request.</p>
+      <p><b>P95 latency</b> là mức latency mà khoảng 95% request có thời gian phản hồi bằng hoặc thấp hơn mức đó.</p>
+
+      <div class="metric-grid">
+        <div class="metric"><b>Average latency</b><span>Cho biết mức trung bình của toàn bộ request.</span></div>
+        <div class="metric"><b>P95 latency</b><span>Giúp quan sát nhóm request nằm ở phía chậm của phân phối.</span></div>
+      </div>
+
+      <div class="question">
+        <b>Câu hỏi trong bài:</b><br/>
+        Tại sao hệ thống cần theo dõi P95 thay vì chỉ dùng average latency?
+      </div>
+
+      <div class="actions">
+        <button class="primary" onclick="choosePrototype()">Tôi vẫn chưa hiểu</button>
+      </div>
+    </div>
+
+    <div class="footer-note">
+      Khi test thật: facilitator đọc task rồi để tester tự thao tác. Không hướng dẫn tester bấm Option nào.
+    </div>
+  </div>
+
+  <div id="choose" class="card hidden">
+    <h2 class="screen-title">Chọn prototype để test</h2>
+    <p class="sub">Ba phương án dùng cùng bài học, cùng câu hỏi và cùng desired outcome.</p>
+    <div class="option-grid">
+      <div class="option-card">
+        <div class="proto-label">OPTION A — User-led</div>
+        <h3>Learner tự chọn phần đang vướng</h3>
+        <p>AI không tự diagnosis. User tự chỉ ra concept cần làm rõ.</p>
+        <button class="primary" onclick="startOption('A')">Mở Option A</button>
+      </div>
+      <div class="option-card">
+        <div class="proto-label">OPTION B — Co-create</div>
+        <h3>AI gợi ý, learner xác nhận</h3>
+        <p>AI đưa candidate gaps và evidence; learner chọn hoặc reject.</p>
+        <button class="primary" onclick="startOption('B')">Mở Option B</button>
+      </div>
+      <div class="option-card">
+        <div class="proto-label">OPTION C — Diagnostic</div>
+        <h3>AI hỏi ngắn + kiểm tra độ tự tin</h3>
+        <p>AI dùng correctness + confidence + self-report để giảm nguy cơ chẩn đoán sai khi user đoán đúng.</p>
+        <button class="primary" onclick="startOption('C')">Mở Option C</button>
+      </div>
+    </div>
+    <div class="actions">
+      <button class="ghost" onclick="showCommon()">← Quay lại bài</button>
+    </div>
+  </div>
+
+  <!-- A -->
+  <div id="a1" class="card hidden">
+    <div class="proto-label">OPTION A — USER-LED CONCEPT SELECTION</div>
+    <h2 class="screen-title">Bạn muốn làm rõ phần nào?</h2>
+    <p class="sub">AI sẽ giải thích mục bạn chọn và không tự xác định knowledge gap thay bạn.</p>
+
+    <div class="option-grid">
+      <div class="option-card"><h3>Percentile nghĩa là gì?</h3><p>Ôn lại cách hiểu percentile trong một phân phối.</p><button class="primary" onclick="showAResult('Percentile')">Chọn</button></div>
+      <div class="option-card"><h3>P95 được diễn giải thế nào?</h3><p>Hiểu ý nghĩa “95% request ở dưới ngưỡng”.</p><button class="primary" onclick="showAResult('P95')">Chọn</button></div>
+      <div class="option-card"><h3>Average khác P95 thế nào?</h3><p>So sánh trung bình với tail latency.</p><button class="primary" onclick="showAResult('Average vs P95')">Chọn</button></div>
+      <div class="option-card"><h3>Outlier ảnh hưởng thế nào?</h3><p>Hiểu vì sao vài request rất chậm có thể bị che bởi average.</p><button class="primary" onclick="showAResult('Outlier')">Chọn</button></div>
+      <div class="option-card"><h3>Tôi muốn tự nhập</h3><p>Dành cho trường hợp các lựa chọn trên chưa đúng.</p><button class="secondary" onclick="showAResult('Nội dung tự nhập')">Nhập nội dung</button></div>
+    </div>
+
+    <div class="actions">
+      <button class="ghost" onclick="showCommon()">← Quay lại bài</button>
+      <button class="danger" onclick="showCommon()">Dừng hỗ trợ</button>
+    </div>
+  </div>
+
+  <div id="a2" class="card hidden">
+    <div class="proto-label">OPTION A — REFRESHER</div>
+    <h2 class="screen-title" id="a-title">Ôn nhanh: Percentile</h2>
+    <p class="sub">Bạn đã tự chọn phần cần làm rõ.</p>
+
+    <div class="content-box">
+      <h3>Percentile — hiểu ngắn gọn</h3>
+      <p>Percentile mô tả vị trí của một giá trị trong phân phối.</p>
+      <p>Nếu <b>P95 latency = 400 ms</b>, có thể hiểu rằng khoảng <b>95% request hoàn thành trong 400 ms hoặc nhanh hơn</b>, còn khoảng 5% request chậm hơn mức đó.</p>
+
+      <div class="question">
+        <b>Liên hệ với bài hiện tại:</b><br/>
+        Average có thể trông “ổn” dù vẫn tồn tại một nhóm request rất chậm. P95 giúp nhìn rõ hơn trải nghiệm của phần request ở phía chậm của phân phối.
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="primary" onclick="showCommon()">Tôi hiểu rồi — quay lại bài</button>
+      <button class="secondary" onclick="showA1()">Giải thích/chọn concept khác</button>
+    </div>
+  </div>
+
+  <!-- B -->
+  <div id="b1" class="card hidden">
+    <div class="proto-label">OPTION B — AI SUGGESTS, USER CONFIRMS</div>
+    <h2 class="screen-title">Có vài phần có thể đang gây khó</h2>
+    <p class="sub">AI chỉ gợi ý dựa trên bài hiện tại. Đây không phải kết luận chắc chắn về kiến thức của bạn.</p>
+
+    <div class="option-grid">
+      <div class="option-card">
+        <h3>1. Percentile</h3>
+        <p>Khái niệm nền để hiểu P95/P99.</p>
+        <div class="reason"><b>Vì sao AI gợi ý?</b><br/>Bài hiện tại chuyển từ average sang P95 và yêu cầu diễn giải percentile.</div>
+        <button class="primary" onclick="showBResult('Percentile')">Đúng, làm rõ phần này</button>
+      </div>
+      <div class="option-card">
+        <h3>2. Average vs tail latency</h3>
+        <p>Sự khác biệt giữa số trung bình và nhóm request chậm.</p>
+        <div class="reason"><b>Vì sao AI gợi ý?</b><br/>Câu hỏi hiện tại yêu cầu giải thích vì sao average chưa đủ.</div>
+        <button class="primary" onclick="showBResult('Average vs tail latency')">Đúng, làm rõ phần này</button>
+      </div>
+      <div class="option-card">
+        <h3>3. Outlier / distribution</h3>
+        <p>Hiểu tác động của một số request rất chậm.</p>
+        <div class="reason"><b>Vì sao AI gợi ý?</b><br/>Một số giá trị chậm có thể bị che khi chỉ nhìn average.</div>
+        <button class="primary" onclick="showBResult('Outlier / distribution')">Đúng, làm rõ phần này</button>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="secondary" onclick="showA1()">Không phải các mục này — tôi tự chọn</button>
+      <button class="ghost" onclick="showCommon()">← Quay lại bài</button>
+      <button class="danger" onclick="showCommon()">Dừng hỗ trợ</button>
+    </div>
+  </div>
+
+  <div id="b2" class="card hidden">
+    <div class="proto-label">OPTION B — AI SUGGESTION + CONFIRMATION</div>
+    <h2 class="screen-title" id="b-title">Có thể bạn đang vướng ở: Percentile</h2>
+    <span class="confidence">Gợi ý tạm thời — cần bạn xác nhận</span>
+
+    <div class="evidence">
+      <b>AI dựa vào:</b>
+      <ul>
+        <li>Lesson đang dùng P95 để so sánh với average.</li>
+        <li>Câu hỏi hiện tại yêu cầu hiểu ý nghĩa của percentile.</li>
+        <li>AI không xem đây là chẩn đoán chắc chắn.</li>
+      </ul>
+    </div>
+
+    <div class="content-box">
+      <h3>Refresher ngắn</h3>
+      <p>Nếu P95 = 400 ms, khoảng 95% request hoàn thành trong 400 ms hoặc nhanh hơn. Phần 5% còn lại nằm ở phía chậm của phân phối.</p>
+      <p>Vì thế P95 cho ta một góc nhìn mà average có thể che mất.</p>
+    </div>
+
+    <div class="actions">
+      <button class="primary" onclick="showCommon()">Đúng vấn đề của tôi — quay lại bài</button>
+      <button class="secondary" onclick="showB1()">Không đúng — chọn phần khác</button>
+      <button class="ghost" onclick="showCommon()">Bỏ gợi ý</button>
+    </div>
+  </div>
+
+  <!-- C -->
+  <div id="c1" class="card hidden quiz">
+    <div class="proto-label">OPTION C — ADAPTIVE DIAGNOSTIC</div>
+    <h2 class="screen-title">Chẩn đoán nhanh trước khi ôn lại</h2>
+    <p class="sub">
+      AI không chỉ nhìn đúng/sai. Kết quả còn xét <b>mức độ tự tin</b> và <b>phần bạn tự đánh dấu là chưa chắc</b>.
+      Diagnosis chỉ là tạm thời và bạn luôn có thể sửa.
+    </p>
+
+    <div class="q">
+      <b>Câu 1. Nếu P95 latency = 400 ms, cách hiểu nào gần đúng nhất?</b>
+      <label><input type="radio" name="q1" value="a"> A. Average latency là 400 ms</label>
+      <label><input type="radio" name="q1" value="b"> B. 95% request mất chính xác 400 ms</label>
+      <label><input type="radio" name="q1" value="c"> C. Khoảng 95% request hoàn thành trong 400 ms hoặc nhanh hơn</label>
+      <label><input type="radio" name="q1" value="d"> D. 5% request hoàn thành trong 400 ms</label>
+      <label for="q1reason" style="margin-top:10px;font-weight:700;">Vì sao bạn chọn đáp án này?</label>
+      <textarea id="q1reason" class="reason-input" placeholder="Viết ngắn gọn lý do của bạn..."></textarea>
+    </div>
+
+    <div class="q">
+      <b>Câu 2. Phần lớn request mất 100–150 ms nhưng một số ít request mất 1000 ms. Metric nào giúp nhìn rõ nhóm chậm hơn?</b>
+      <label><input type="radio" name="q2" value="a"> A. Chỉ average</label>
+      <label><input type="radio" name="q2" value="b"> B. P95/P99</label>
+      <label><input type="radio" name="q2" value="c"> C. Request count</label>
+      <label><input type="radio" name="q2" value="d"> D. Không metric nào</label>
+      <label for="q2reason" style="margin-top:10px;font-weight:700;">Vì sao bạn chọn đáp án này?</label>
+      <textarea id="q2reason" class="reason-input" placeholder="Viết ngắn gọn lý do của bạn..."></textarea>
+    </div>
+
+    <div class="q">
+      <b>Câu 3. Bạn tự đánh giá thế nào?</b>
+      <p class="small" style="margin-bottom:8px;">Mức độ tự tin với hai câu vừa trả lời:</p>
+      <label><input type="radio" name="confidence" value="high"> Tôi khá chắc và có thể giải thích lại</label>
+      <label><input type="radio" name="confidence" value="medium"> Tôi tương đối chắc nhưng vẫn hơi phân vân</label>
+      <label><input type="radio" name="confidence" value="guess"> Tôi chủ yếu đoán / không chắc</label>
+
+      <p class="small" style="margin:14px 0 8px;">Phần bạn cảm thấy chưa chắc nhất:</p>
+      <label><input type="radio" name="q3" value="percentile"> Percentile / cách hiểu P95</label>
+      <label><input type="radio" name="q3" value="average"> Average vs P95</label>
+      <label><input type="radio" name="q3" value="distribution"> Distribution / outlier / tail latency</label>
+      <label><input type="radio" name="q3" value="unknown"> Tôi chưa biết mình vướng ở đâu</label>
+    </div>
+
+    <div class="question">
+      <b>Cách Option C xử lý “đoán đúng”:</b><br/>
+      Nếu bạn trả lời đúng nhưng <b>lý do không thể hiện hiểu biết</b> hoặc bạn chọn <b>“Tôi chủ yếu đoán”</b>, AI sẽ không coi đó là bằng chứng bạn đã hiểu chắc.
+    </div>
+
+    <div class="actions">
+      <button class="primary" onclick="diagnose()">Phân tích knowledge gap</button>
+      <button class="secondary" onclick="showA1()">Bỏ qua — tôi tự chọn</button>
+      <button class="ghost" onclick="showCommon()">← Quay lại bài</button>
+    </div>
+  </div>
+
+  <div id="c2" class="card hidden">
+    <div class="proto-label">OPTION C — DIAGNOSIS</div>
+    <h2 class="screen-title">Diagnosis tạm thời: <span id="c-gap">Percentile</span></h2>
+    <span class="confidence" id="c-reliability">Độ tin cậy: Trung bình</span>
+
+    <div class="evidence">
+      <b>AI dựa vào:</b>
+      <ul id="c-evidence">
+        <li>Kết quả đúng/sai của câu hỏi chẩn đoán.</li>
+        <li>Lý do bạn chọn đáp án.</li>
+        <li>Mức độ tự tin bạn tự báo cáo.</li>
+        <li>Phần kiến thức bạn tự đánh dấu là chưa chắc.</li>
+      </ul>
+    </div>
+
+    <div class="content-box">
+      <h3>Refresher ngắn</h3>
+      <div id="c-refresher">
+        <p><b>Percentile</b> mô tả một vị trí trong phân phối. P95 = 400 ms nghĩa là khoảng 95% request có latency ≤ 400 ms.</p>
+        <p>Average có thể che đi “đuôi chậm”, còn P95/P99 giúp quan sát nó rõ hơn.</p>
+      </div>
+    </div>
+
+    <div class="question" id="c-uncertainty-note">
+      <b>Uncertainty:</b><br/>
+      Đây là diagnosis tạm thời, không phải kết luận chắc chắn về kiến thức của bạn.
+    </div>
+
+    <div class="actions">
+      <button class="primary" onclick="showCommon()">Đúng — quay lại bài</button>
+      <button class="secondary" onclick="showA1()">Không đúng — tôi tự chọn phần khác</button>
+      <button class="ghost" onclick="showC1()">Làm lại diagnostic</button>
+      <button class="danger" onclick="showCommon()">Bỏ diagnosis</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const screens = ['common','choose','a1','a2','b1','b2','c1','c2'];
+
+function hideAll(){
+  screens.forEach(id=>document.getElementById(id).classList.add('hidden'));
+}
+function setTab(t){
+  ['common','a','b','c'].forEach(x=>{
+    document.getElementById('tab-'+x).classList.remove('active');
+  });
+  document.getElementById('tab-'+t.toLowerCase()).classList.add('active');
+}
+function showCommon(){ hideAll(); document.getElementById('common').classList.remove('hidden'); setTab('common'); window.scrollTo({top:0,behavior:'smooth'}); }
+function choosePrototype(){ hideAll(); document.getElementById('choose').classList.remove('hidden'); window.scrollTo({top:0,behavior:'smooth'}); }
+function startOption(opt){
+  hideAll(); setTab(opt);
+  if(opt==='A') document.getElementById('a1').classList.remove('hidden');
+  if(opt==='B') document.getElementById('b1').classList.remove('hidden');
+  if(opt==='C') document.getElementById('c1').classList.remove('hidden');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function showA1(){ hideAll(); document.getElementById('a1').classList.remove('hidden'); setTab('a'); window.scrollTo({top:0,behavior:'smooth'}); }
+function showAResult(topic){ hideAll(); document.getElementById('a2').classList.remove('hidden'); document.getElementById('a-title').textContent='Ôn nhanh: '+topic; setTab('a'); window.scrollTo({top:0,behavior:'smooth'}); }
+function showB1(){ hideAll(); document.getElementById('b1').classList.remove('hidden'); setTab('b'); window.scrollTo({top:0,behavior:'smooth'}); }
+function showBResult(topic){ hideAll(); document.getElementById('b2').classList.remove('hidden'); document.getElementById('b-title').textContent='Có thể bạn đang vướng ở: '+topic; setTab('b'); window.scrollTo({top:0,behavior:'smooth'}); }
+function showC1(){ hideAll(); document.getElementById('c1').classList.remove('hidden'); setTab('c'); window.scrollTo({top:0,behavior:'smooth'}); }
+function diagnose(){
+  const q1 = document.querySelector('input[name=q1]:checked')?.value;
+  const q2 = document.querySelector('input[name=q2]:checked')?.value;
+  const q3 = document.querySelector('input[name=q3]:checked')?.value;
+  const confidence = document.querySelector('input[name=confidence]:checked')?.value;
+  const q1Reason = (document.getElementById('q1reason')?.value || '').trim();
+  const q2Reason = (document.getElementById('q2reason')?.value || '').trim();
+
+  if(!q1 || !q2 || !q3 || !confidence || !q1Reason || !q2Reason){
+    alert('Bạn hãy trả lời đủ 2 câu chẩn đoán, viết ngắn gọn lý do chọn đáp án, chọn mức độ tự tin và phần bạn chưa chắc nhất.');
+    return;
+  }
+
+  const q1Correct = q1 === 'c';
+  const q2Correct = q2 === 'b';
+  const score = (q1Correct ? 1 : 0) + (q2Correct ? 1 : 0);
+
+  // Prototype heuristic: reasoning quality is approximated from key ideas.
+  // In a real AI system, an LLM/rubric would evaluate semantic reasoning instead of keyword matching.
+  const norm = s => s.toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g,'')
+    .replace(/[^\w\s%]/g,' ');
+
+  const r1 = norm(q1Reason);
+  const r2 = norm(q2Reason);
+
+  const q1ReasonGood =
+    (r1.includes('95') && (
+      r1.includes('nhanh hon') ||
+      r1.includes('nho hon') ||
+      r1.includes('bang hoac') ||
+      r1.includes('nguong') ||
+      r1.includes('percentile') ||
+      r1.includes('request')
+    ));
+
+  const q2ReasonGood =
+    (
+      r2.includes('nhom cham') ||
+      r2.includes('duoi') ||
+      r2.includes('tail') ||
+      r2.includes('outlier') ||
+      r2.includes('che') ||
+      r2.includes('p95') ||
+      r2.includes('p99')
+    );
+
+  let gap = 'Percentile / cách hiểu P95';
+  let reliability = 'Độ tin cậy: Trung bình';
+  let note = 'Đây là diagnosis tạm thời, không phải kết luận chắc chắn về kiến thức của bạn.';
+  let refresher = `
+    <p><b>Percentile</b> mô tả vị trí của một giá trị trong phân phối.</p>
+    <p>Nếu P95 = 400 ms, khoảng 95% request có latency ≤ 400 ms; phần còn lại nằm ở phía chậm hơn.</p>
+  `;
+
+  // Diagnose from correctness + reasoning
+  if(!q1Correct && q2Correct){
+    gap = 'Percentile / cách diễn giải P95';
+  } else if(q1Correct && !q2Correct){
+    gap = 'Tail latency / vì sao average chưa đủ';
+    refresher = `
+      <p><b>Average</b> cho biết mức trung bình nhưng có thể che mất một nhóm request rất chậm.</p>
+      <p><b>P95/P99</b> giúp quan sát phần “đuôi chậm” của phân phối latency.</p>
+    `;
+  } else if(!q1Correct && !q2Correct){
+    gap = 'Nền tảng P95: Percentile + Tail latency';
+    refresher = `
+      <p>Trước hết cần nối hai ý: <b>P95 là một percentile</b> và <b>percentile giúp nhìn phần chậm của phân phối</b>.</p>
+      <p>Vì vậy P95 bổ sung góc nhìn mà average có thể bỏ sót.</p>
+    `;
+  } else {
+    // Both answers are correct, but that is not enough.
+    if(confidence === 'guess' || !q1ReasonGood || !q2ReasonGood){
+      gap = 'Hiểu chưa ổn định về P95';
+      reliability = 'Độ tin cậy: Thấp–Trung bình';
+      note = 'Bạn trả lời đúng, nhưng mức độ tự tin hoặc phần giải thích chưa đủ để chứng minh bạn đã hiểu chắc. AI coi đây là evidence mâu thuẫn và không kết luận “đã hiểu”.';
+    } else if(q3 === 'distribution'){
+      gap = 'Distribution / outlier / tail latency';
+    } else if(q3 === 'average'){
+      gap = 'Average vs P95';
+    } else if(q3 === 'percentile'){
+      gap = 'Percentile / cách hiểu P95';
+    } else {
+      gap = 'Liên hệ P95 với tail latency';
+    }
+  }
+
+  // Reliability logic
+  if(score === 2 && q1ReasonGood && q2ReasonGood && confidence === 'high' && q3 !== 'unknown'){
+    reliability = 'Độ tin cậy: Khá cao';
+  } else if(
+    confidence === 'guess' ||
+    (q1Correct && !q1ReasonGood) ||
+    (q2Correct && !q2ReasonGood)
+  ){
+    reliability = 'Độ tin cậy: Thấp–Trung bình';
+  } else if(score === 0){
+    reliability = 'Độ tin cậy: Trung bình';
+  }
+
+  const confidenceText = {
+    high: 'Khá chắc và có thể giải thích lại',
+    medium: 'Tương đối chắc nhưng còn phân vân',
+    guess: 'Chủ yếu đoán / không chắc'
+  }[confidence];
+
+  const selfReportText = {
+    percentile: 'Percentile / cách hiểu P95',
+    average: 'Average vs P95',
+    distribution: 'Distribution / outlier / tail latency',
+    unknown: 'Chưa biết mình vướng ở đâu'
+  }[q3];
+
+  const reasoningSummary = `
+    <li><b>Reasoning câu 1:</b> ${q1ReasonGood ? 'Có dấu hiệu hiểu đúng ý chính.' : 'Chưa thể hiện rõ ý chính / có thể là đoán đúng.'}</li>
+    <li><b>Reasoning câu 2:</b> ${q2ReasonGood ? 'Có dấu hiệu hiểu vai trò của tail latency.' : 'Chưa thể hiện rõ vì sao P95/P99 cần thiết.'}</li>
+  `;
+
+  hideAll();
+  document.getElementById('c2').classList.remove('hidden');
+  document.getElementById('c-gap').textContent = gap;
+  document.getElementById('c-reliability').textContent = reliability;
+  document.getElementById('c-evidence').innerHTML = `
+    <li><b>Correctness:</b> Câu 1 ${q1Correct ? 'đúng' : 'chưa đúng'}; Câu 2 ${q2Correct ? 'đúng' : 'chưa đúng'}.</li>
+    ${reasoningSummary}
+    <li><b>Confidence:</b> ${confidenceText}.</li>
+    <li><b>Self-report:</b> ${selfReportText}.</li>
+    <li>AI kết hợp <b>đúng/sai + lý do + confidence + self-report</b>, thay vì coi đáp án đúng là đủ.</li>
+  `;
+  document.getElementById('c-refresher').innerHTML = refresher;
+  document.getElementById('c-uncertainty-note').innerHTML = `<b>Uncertainty:</b><br/>${note}`;
+  setTab('c');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+</script>
+</body>
+</html>
